@@ -59,7 +59,7 @@ namespace Canducci.SqlRaw
             return strBuilder.ToString();
         }
 
-        public (string Sql, List<object> Values) ToSqlBiding()
+        public (string Sql, List<object> Values) ToSqlBinding()
         {
             StringBuilder strBuilder = new StringBuilder();
             Func<List<object>, string> Func = delegate (List<object> values)

@@ -45,14 +45,22 @@ namespace Canducci.Test
             SqlBuilderInsert insertMysqlServer = raw.InsertFrom("People", MysqlServerProvider);
             SqlBuilderInsert insertPostgresServer = raw.InsertFrom("People", PostgresServerProvider);
 
-            (string Sql, List<object> Values) strSqlSqlServer = insertSqlServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBiding();
-            (string Sql, List<object> Values) strSqlMySqlServer = insertMysqlServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBiding();
-            (string Sql, List<object> Values) strSqlPostgresServer = insertPostgresServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBiding();
+            (string Sql, List<object> Values) SqlSqlServer = insertSqlServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBinding();
+            (string Sql, List<object> Values) SqlMySqlServer = insertMysqlServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBinding();
+            (string Sql, List<object> Values) SqlPostgresServer = insertPostgresServer.AddColumns("Name", "Created").AddValues("Name 1", created).ToSqlBinding();
 
-            Assert.AreEqual($"INSERT INTO [People]([Name],[Created]) VALUES(p0,p1)", strSqlSqlServer.Sql);
-            Assert.AreEqual($"INSERT INTO `People`(`Name`,`Created`) VALUES(p0,p1)", strSqlMySqlServer.Sql);
-            Assert.AreEqual($"INSERT INTO \"People\"(\"Name\",\"Created\") VALUES(p0,p1)", strSqlPostgresServer.Sql);
+            Assert.AreEqual($"INSERT INTO [People]([Name],[Created]) VALUES(p0,p1)", SqlSqlServer.Sql);
+            Assert.AreEqual($"INSERT INTO `People`(`Name`,`Created`) VALUES(p0,p1)", SqlMySqlServer.Sql);
+            Assert.AreEqual($"INSERT INTO \"People\"(\"Name\",\"Created\") VALUES(p0,p1)", SqlPostgresServer.Sql);
 
+            Assert.AreEqual("Name 1", SqlSqlServer.Values[0]);
+            Assert.AreEqual(created, SqlSqlServer.Values[1]);
+
+            Assert.AreEqual("Name 1", SqlMySqlServer.Values[0]);
+            Assert.AreEqual(created, SqlMySqlServer.Values[1]);
+
+            Assert.AreEqual("Name 1", SqlPostgresServer.Values[0]);
+            Assert.AreEqual(created, SqlPostgresServer.Values[1]);
         }
     }
 }
