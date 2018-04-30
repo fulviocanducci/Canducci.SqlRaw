@@ -13,5 +13,10 @@ namespace Canducci.SqlRaw
             return new SqlBuilderInsert(table, provider);
         }
 
+        public SqlBuilderUpdate UpdateFrom(string table, Provider provider)
+        {
+            return new SqlBuilderUpdate(table, provider);
+        }
+
     }
 }
