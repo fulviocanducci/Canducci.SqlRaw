@@ -58,6 +58,6 @@ namespace Canducci.SqlRaw
         }
 
         public abstract string ToRawSql();
-        public abstract (string Sql, List<object> Values) ToSqlBinding();
+        public abstract (string Sql, List<object> Values, object ClassObject) ToSqlBinding();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Canducci.SqlRaw.Providers;
+using Canducci.SqlRaw.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,12 +22,24 @@ namespace Canducci.SqlRaw
             strBuilder.Append(")");
             strBuilder.Append(" VALUES");
             strBuilder.Append("(");
-            strBuilder.Append("'" + string.Join("','", Values) + "'");
+            var ValuesOfNull = Values;
+            for(int i = 0; i < ValuesOfNull.Count; i++)
+            {
+                if (ValuesOfNull[i] is SqlBuilderParameter parameter)
+                {
+                    ValuesOfNull[i] = parameter.Value == null ? "NULL": parameter.Value;
+                }
+                else
+                {
+                    ValuesOfNull[i] = $"'{ValuesOfNull[i]}'";
+                }
+            }
+            strBuilder.Append(string.Join(",", ValuesOfNull));
             strBuilder.Append(")");
             return strBuilder.ToString();
         }
 
-        public override (string Sql, List<object> Values) ToSqlBinding()
+        public override (string Sql, List<object> Values, object ClassObject) ToSqlBinding()
         {
             StringBuilder strBuilder = new StringBuilder();
             Func<List<object>, string> Func = delegate (List<object> values)
@@ -37,7 +50,7 @@ namespace Canducci.SqlRaw
                 {
                     if (!string.IsNullOrEmpty(parameter))
                         parameter += ",";
-                    parameter += $"p{i++}";
+                    parameter += $"@p{i++}";
                 });
                 return parameter;
             };
@@ -50,7 +63,7 @@ namespace Canducci.SqlRaw
             strBuilder.Append("(");
             strBuilder.Append(Func(Values));
             strBuilder.Append(")");
-            return (strBuilder.ToString(), Values);
+            return (strBuilder.ToString(), Values, ParameterObjectBuilder.CreateObjectWithValues(Values));
         }
     }
 }
